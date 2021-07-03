@@ -13,6 +13,8 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable,  HasApiTokens, UserValidator;
 
+    public const POLICY = true;
+
     /**
      * The attributes that are not mass assignable.
      *

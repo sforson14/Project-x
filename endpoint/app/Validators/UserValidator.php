@@ -6,6 +6,7 @@ namespace App\Validators;
 use App\Models\Role;
 use App\Utils\Constants;
 use Illuminate\Validation\Rule;
+use PHPUnit\TextUI\XmlConfiguration\Constant;
 
 trait UserValidator
 {
@@ -25,12 +26,7 @@ trait UserValidator
         ];
     }
 
-    /**
-     * validation rules for storing a user
-     *
-     * @return void
-     */
-    public static function storeRules()
+    public static function registerRules()
     {
         return [
             'first_name' => ['string', 'required'],
@@ -44,9 +40,32 @@ trait UserValidator
             'email' => [
                 'required', 'email',
                 Rule::unique('users', 'email')
-                    ->whereNull('deleted_at')
+
             ],
             'password' => ['required', 'string', 'min:6', 'confirmed']
+        ];
+    }
+
+    /**
+     * validation rules for storing a user
+     *
+     * @return void
+     */
+    public static function storeRules()
+    {
+        return [
+            'first_name' => ['string', 'required'],
+            'last_name' => ['string', 'required'],
+            'role_id' => [
+                'required', 'integer',
+                Rule::notIn([Constants::ADMIN_ROLE_ID, Constants::CLIENT_ROLE_ID]),
+
+            ],
+            'email' => [
+                'required', 'email',
+                Rule::unique('users', 'email')
+
+            ]
         ];
     }
 
@@ -62,8 +81,8 @@ trait UserValidator
             'first_name' => ['string', 'required'],
             'last_name' => ['string', 'required'],
             'email' => [
-                'required', 'email' .
-                    Rule::unique('users', 'email')
+                'required', 'email',
+                Rule::unique('users', 'email')
                     ->ignore($id)
                     ->whereNull('deleted_at')
             ],

@@ -9,7 +9,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Model extends BaseModel
 {
-    use HasFactory, ParseDate, SoftDeletes;
+    use HasFactory, ParseDate;
+
+    public const POLICY = true;
 
 
     /**

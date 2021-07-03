@@ -59,11 +59,17 @@ abstract class BaseController extends Controller
     {
         $data = $request->validate($this->service->model()::updateRules($id), $this->service->model()::errorMessages());
 
-        $resource = $this->service->update($id, $data);
+        $resource = $this->service->show($id);
 
         if (!$resource) {
             return response()->json(['message' => 'resource not found'], Response::HTTP_NOT_FOUND);
         }
+
+        if ($this->service->model()::POLICY) {
+            // $this->authorize('view', $resource);
+        }
+
+        $resource = $this->service->update($id, $data);
 
         return response()->json($resource);
     }
@@ -76,11 +82,19 @@ abstract class BaseController extends Controller
      */
     public function destroy($id)
     {
-        $deleted = $this->service->destroy($id);
 
-        if (!$deleted) {
+        $resource = $this->service->show($id);
+
+        if (!$resource) {
             return response()->json(['message' => 'resource not found'], Response::HTTP_NOT_FOUND);
         }
+
+        if ($this->service->model()::POLICY) {
+            // $this->authorize('delete', $resource);
+        }
+
+        $this->service->destroy($id);
+
 
         return response()->json([], Response::HTTP_NO_CONTENT);
     }
@@ -113,5 +127,17 @@ abstract class BaseController extends Controller
     protected function filters()
     {
         return [];
+    }
+
+    /**
+     * parse data
+     *
+     * @return array
+     */
+    public function parseData($data)
+    {
+        $data['client_id'] = auth()->user()->id;
+
+        return $data;
     }
 }

@@ -50,7 +50,7 @@ class AuthController extends Controller
      */
     public function register(Request $request)
     {
-        $data = $request->validate($this->service->model()::storeRules(), $this->service->model()::errorMessages());
+        $data = $request->validate($this->service->model()::registerRules(), $this->service->model()::errorMessages());
         $data['password'] = bcrypt($data['password']);
 
         $user = $this->service->store($data);
